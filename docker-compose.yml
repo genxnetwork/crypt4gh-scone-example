@@ -1,0 +1,27 @@
+version: '3.2'
+
+x-crypt4gh-service: &crypt4gh-service
+    image: crypt4gh-sconified
+    env_file: ./.env
+    devices:
+      - $DEVICE
+    depends_on:
+      - las  
+
+services:
+  encrypt:
+    <<: *crypt4gh-service
+    environment:
+      # Specify session and service to load context from the CAS
+      - SCONE_CONFIG_ID=${SESSION}/encrypt
+
+  process:
+    <<: *crypt4gh-service
+    environment:
+      - SCONE_CONFIG_ID=${SESSION}/process
+
+  las:
+    image: registry.scontain.com:5050/sconecuratedimages/kubernetes:las-scone5.1
+    env_file: ./.env
+    devices:
+      - $DEVICE

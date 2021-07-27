@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+set -o pipefail
+
+# Detect what SGX device is available
+DEVICE="/dev/sgx"
+if [[ ! -d "$DEVICE" ]] ; then
+    DEVICE="/dev/isgx"
+    if [[ ! -c "$DEVICE" ]] ; then
+        echo "Can't find SGX device (/dev/sgx or /dev/isgx)."
+        exit 1
+    fi
+fi
+export DEVICE
+
+
+set -a
+. ./template.env
+set +a
+
+exec bash "$@"

@@ -1,0 +1,50 @@
+# CAS session template
+# https://sconedocs.github.io/CAS_session_lang_0_3/
+name: "$SESSION"
+version: "0.3"
+
+access_policy:
+  read:
+   - NONE
+  update:
+   - NONE
+
+secrets:
+  - name: SENDER_KEY
+    # Generate the sender private key
+    kind: binary
+    size: 32
+
+  - name: RECIPIENT_KEY
+    # Generate the recipient private key
+    kind: binary
+    size: 32
+
+services:
+
+   - name: encrypt  # Service to encrypt a file from STDIN
+     mrenclaves: [$MRENCLAVE]
+     command: "python3 /app encrypt"
+     environment:
+       # Inject HEX representation of generated keys into the service environment
+       SENDER_KEY: "$$SCONE::SENDER_KEY:hex$$"
+       RECIPIENT_KEY: "$$SCONE::RECIPIENT_KEY:hex$$"
+     # Use File System Protection File to check the consistency of the service files (app/*.py) 
+     fspf_path: /fspf/fs.fspf
+     fspf_key: $FSPF_KEY
+     fspf_tag: $FSPF_TAG
+
+   - name: process  # Service to process encrypted file from STDIN
+     mrenclaves: [$MRENCLAVE]
+     command: "python3 /app process"
+     environment:
+       SENDER_KEY: "$$SCONE::SENDER_KEY:hex$$"
+       RECIPIENT_KEY: "$$SCONE::RECIPIENT_KEY:hex$$"
+     fspf_path: /fspf/fs.fspf
+     fspf_key: $FSPF_KEY
+     fspf_tag: $FSPF_TAG
+
+security:
+  attestation:
+    tolerate: [debug-mode, hyperthreading, insecure-igpu, outdated-tcb, software-hardening-needed]
+    ignore_advisories: "*"

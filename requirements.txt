@@ -1,0 +1,7 @@
+cryptography==2.8
+crypt4gh==1.5
+
+click==7.1.2
+
+pysam==0.16.0.1
+vcfpy==0.13.3
