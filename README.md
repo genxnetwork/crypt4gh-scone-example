@@ -13,6 +13,7 @@ Encryption keys are
 
 ## Requirements
 
+* Host with Intel Software Guard Extensions (SGX) enabled, and SGX [driver installed](https://sconedocs.github.io/sgxinstall/)
 * Docker access to the Scontain Registry https://sconedocs.github.io/registry/
 * Docker and Docker Compose installed
 * Build utilites installed: awk, curl, make, openssl
